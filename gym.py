@@ -42,8 +42,6 @@ st.subheader("Daily Targets")
 st.write(f"**Estimated TDEE:** {tdee:.0f} kcal/day")
 st.write(f"**Protein:** {prot_goal:.1f} g, **Fat:** {fat_goal:.1f} g, **Carbs:** {carb_goal:.1f} g")
 
-# --- Registro de alimentos ---
-st.subheader("Log Food (values per 100g)")
 
 # --- Lista de alimentos predefinidos ---
 predefined_foods = {
@@ -75,7 +73,8 @@ if st.button("Add Predefined Food"):
         )
         st.success(f"{selected_food} added.")
 
-
+# --- Registro de alimentos ---
+st.subheader("Log Food (values per 100g)")
 with st.form("food_form"):
     name = st.text_input("Food name")
     cal_100 = st.number_input("Calories per 100g", 0, 900, 0)
