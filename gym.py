@@ -95,28 +95,33 @@ predefined_foods = {
     # Add more if needed
 }
 
-# --- Agregar alimento predefinido ---
+
+# --- Autocomplete-like UI (Using `st.text_input` with filtering) ---
 st.subheader("Add Predefined Food")
+search_term = st.text_input("Search food (start typing)")
 
-selected_food = st.selectbox("Select a predefined food (type to search)", list(predefined_foods.keys()))
+# Filter the predefined foods based on the search term
+filtered_foods = {food: data for food, data in predefined_foods.items() if search_term.lower() in food.lower()}
 
-amount_predef = st.number_input("Amount consumed (g)", 1, 1000, 100, key="amount_predef")
+if filtered_foods:
+    selected_food = st.selectbox("Select a food", list(filtered_foods.keys()))
+    amount_predef = st.number_input("Amount consumed (g)", 1, 1000, 100)
 
-if st.button("Add Predefined Food"):
-    if selected_food != "-- Choose one --":
-        data = predefined_foods[selected_food]
-        factor = amount_predef / 100
-        new_row = {
-            "Food": selected_food,
-            "Calories": data["Calories"] * factor,
-            "Protein": data["Protein"] * factor,
-            "Fat": data["Fat"] * factor,
-            "Carbs": data["Carbs"] * factor
-        }
-        st.session_state["log"] = pd.concat(
-            [st.session_state["log"], pd.DataFrame([new_row])], ignore_index=True
-        )
-        st.success(f"{selected_food} added.")
+    if st.button("Add Predefined Food"):
+        if selected_food:
+            data = filtered_foods[selected_food]
+            factor = amount_predef / 100
+            new_row = {
+                "Food": selected_food,
+                "Calories": data["Calories"] * factor,
+                "Protein": data["Protein"] * factor,
+                "Fat": data["Fat"] * factor,
+                "Carbs": data["Carbs"] * factor
+            }
+            st.session_state["log"] = pd.concat([st.session_state["log"], pd.DataFrame([new_row])], ignore_index=True)
+            st.success(f"{selected_food} added.")
+else:
+    st.warning("No food found. Please type more characters or select a predefined one.")
 
 # --- Registro de alimentos ---
 st.subheader("Log Food (values per 100g)")
