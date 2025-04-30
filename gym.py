@@ -38,9 +38,20 @@ prot_goal, fat_goal, carb_goal = calc_macros(tdee, weight)
 
 # --- Mostrar metas ---
 st.title("RubensTracker Dashboard")
-st.subheader("Daily Targets")
-st.write(f"**Estimated TDEE:** {tdee:.0f} kcal/day")
-st.write(f"**Protein:** {prot_goal:.1f} g, **Fat:** {fat_goal:.1f} g, **Carbs:** {carb_goal:.1f} g")
+# --- Mostrar progreso ---
+st.subheader("Daily Progress")
+totals = st.session_state["log"][["Calories", "Protein", "Fat", "Carbs"]].sum()
+
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Calories", f"{round(totals['Calories'])} / {round(tdee)}")
+col2.metric("Protein (g)", f"{round(totals['Protein'])} / {round(prot_goal)}")
+col3.metric("Fat (g)", f"{round(totals['Fat'])} / {round(fat_goal)}")
+col4.metric("Carbs (g)", f"{round(totals['Carbs'])} / {round(carb_goal)}")
+
+
+st.progress(min(totals['Calories'] / tdee, 1.0))
+st.dataframe(st.session_state["log"])
+
 
 
 # --- Lista de alimentos predefinidos ---
@@ -110,16 +121,4 @@ if not st.session_state["log"].empty:
         st.session_state["log"].reset_index(drop=True, inplace=True)
         st.success("Entry deleted!")
 
-# --- Mostrar progreso ---
-st.subheader("Daily Progress")
-totals = st.session_state["log"][["Calories", "Protein", "Fat", "Carbs"]].sum()
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Calories", f"{round(totals['Calories'])} / {round(tdee)}")
-col2.metric("Protein (g)", f"{round(totals['Protein'])} / {round(prot_goal)}")
-col3.metric("Fat (g)", f"{round(totals['Fat'])} / {round(fat_goal)}")
-col4.metric("Carbs (g)", f"{round(totals['Carbs'])} / {round(carb_goal)}")
-
-
-st.progress(min(totals['Calories'] / tdee, 1.0))
-st.dataframe(st.session_state["log"])
