@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+# --- Inicializar registro si no existe ---
+if "log" not in st.session_state:
+    st.session_state["log"] = pd.DataFrame(columns=["Food", "Calories", "Protein", "Fat", "Carbs"])
+
 # --- Funciones de cálculo ---
 def calc_bmr(weight, height, age, sex):
     if sex == 'Male':
