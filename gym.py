@@ -43,22 +43,32 @@ st.write(f"**Estimated TDEE:** {tdee:.0f} kcal/day")
 st.write(f"**Protein:** {prot_goal:.1f} g, **Fat:** {fat_goal:.1f} g, **Carbs:** {carb_goal:.1f} g")
 
 # --- Registro de alimentos ---
-st.subheader("Log Food")
+st.subheader("Log Food (values per 100g)")
+
 with st.form("food_form"):
     name = st.text_input("Food name")
-    cal = st.number_input("Calories", 0, 2000, 0)
-    prot = st.number_input("Protein (g)", 0.0, 200.0, 0.0)
-    fat = st.number_input("Fat (g)", 0.0, 200.0, 0.0)
-    carb = st.number_input("Carbs (g)", 0.0, 300.0, 0.0)
+    cal_100 = st.number_input("Calories per 100g", 0, 900, 0)
+    prot_100 = st.number_input("Protein per 100g (g)", 0.0, 100.0, 0.0)
+    fat_100 = st.number_input("Fat per 100g (g)", 0.0, 100.0, 0.0)
+    carb_100 = st.number_input("Carbs per 100g (g)", 0.0, 100.0, 0.0)
+    amount = st.number_input("Amount consumed (g)", 1, 1000, 100)
     submitted = st.form_submit_button("Add Food")
 
 if "log" not in st.session_state:
     st.session_state["log"] = pd.DataFrame(columns=["Food", "Calories", "Protein", "Fat", "Carbs"])
 
-if submitted and name:
-    new_row = {"Food": name, "Calories": cal, "Protein": prot, "Fat": fat, "Carbs": carb}
-    st.session_state["log"] = pd.concat([st.session_state["log"], pd.DataFrame([new_row])], ignore_index=True)
-
+if submitted and name and amount > 0:
+    factor = amount / 100
+    new_row = {
+        "Food": name,
+        "Calories": cal_100 * factor,
+        "Protein": prot_100 * factor,
+        "Fat": fat_100 * factor,
+        "Carbs": carb_100 * factor
+    }
+    st.session_state["log"] = pd.concat(
+        [st.session_state["log"], pd.DataFrame([new_row])], ignore_index=True
+    )
 # --- Eliminar alimento ---
 st.subheader("Remove Food Entry")
 if not st.session_state["log"].empty:
