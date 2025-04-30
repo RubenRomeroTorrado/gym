@@ -38,6 +38,9 @@ prot_goal, fat_goal, carb_goal = calc_macros(tdee, weight)
 
 # --- Mostrar metas ---
 st.title("RubensTracker Dashboard")
+st.subheader("Daily Targets")
+st.write(f"**Estimated TDEE:** {tdee:.0f} kcal/day")
+st.write(f"**Protein:** {prot_goal:.1f} g, **Fat:** {fat_goal:.1f} g, **Carbs:** {carb_goal:.1f} g")
 # --- Mostrar progreso ---
 st.subheader("Daily Progress")
 totals = st.session_state["log"][["Calories", "Protein", "Fat", "Carbs"]].sum()
