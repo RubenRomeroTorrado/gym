@@ -37,13 +37,44 @@ tdee = calc_tdee(bmr, activity[1])
 prot_goal, fat_goal, carb_goal = calc_macros(tdee, weight)
 
 # --- Mostrar metas ---
-st.title("MyFitness MVP Dashboard")
+st.title("RubensTracker Dashboard")
 st.subheader("Daily Targets")
 st.write(f"**Estimated TDEE:** {tdee:.0f} kcal/day")
 st.write(f"**Protein:** {prot_goal:.1f} g, **Fat:** {fat_goal:.1f} g, **Carbs:** {carb_goal:.1f} g")
 
 # --- Registro de alimentos ---
 st.subheader("Log Food (values per 100g)")
+
+# --- Lista de alimentos predefinidos ---
+predefined_foods = {
+    "Chicken Breast (grilled)": {"Calories": 165, "Protein": 31, "Fat": 3.6, "Carbs": 0},
+    "White Rice (cooked)": {"Calories": 130, "Protein": 2.7, "Fat": 0.3, "Carbs": 28},
+    "Broccoli (boiled)": {"Calories": 35, "Protein": 2.4, "Fat": 0.4, "Carbs": 7.2},
+    "Salmon (grilled)": {"Calories": 206, "Protein": 22, "Fat": 13, "Carbs": 0},
+    "Oats (raw)": {"Calories": 389, "Protein": 16.9, "Fat": 6.9, "Carbs": 66.3}
+}
+# --- Agregar alimento predefinido ---
+st.subheader("Add Predefined Food")
+
+selected_food = st.selectbox("Select a food", ["-- Choose one --"] + list(predefined_foods.keys()))
+amount_predef = st.number_input("Amount consumed (g)", 1, 1000, 100, key="amount_predef")
+
+if st.button("Add Predefined Food"):
+    if selected_food != "-- Choose one --":
+        data = predefined_foods[selected_food]
+        factor = amount_predef / 100
+        new_row = {
+            "Food": selected_food,
+            "Calories": data["Calories"] * factor,
+            "Protein": data["Protein"] * factor,
+            "Fat": data["Fat"] * factor,
+            "Carbs": data["Carbs"] * factor
+        }
+        st.session_state["log"] = pd.concat(
+            [st.session_state["log"], pd.DataFrame([new_row])], ignore_index=True
+        )
+        st.success(f"{selected_food} added.")
+
 
 with st.form("food_form"):
     name = st.text_input("Food name")
