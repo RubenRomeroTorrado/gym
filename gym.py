@@ -75,10 +75,11 @@ st.subheader("Daily Progress")
 totals = st.session_state["log"][["Calories", "Protein", "Fat", "Carbs"]].sum()
 
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Calories", f"{totals['Calories']:.0f} / {tdee:.0f}")
-col2.metric("Protein (g)", f"{totals['Protein']:.1f} / {prot_goal:.1f}")
-col3.metric("Fat (g)", f"{totals['Fat']:.1f} / {fat_goal:.1f}")
-col4.metric("Carbs (g)", f"{totals['Carbs']:.1f} / {carb_goal:.1f}")
+col1.metric("Calories", f"{round(totals['Calories'])} / {round(tdee)}")
+col2.metric("Protein (g)", f"{round(totals['Protein'])} / {round(prot_goal)}")
+col3.metric("Fat (g)", f"{round(totals['Fat'])} / {round(fat_goal)}")
+col4.metric("Carbs (g)", f"{round(totals['Carbs'])} / {round(carb_goal)}")
+
 
 st.progress(min(totals['Calories'] / tdee, 1.0))
 st.dataframe(st.session_state["log"])
